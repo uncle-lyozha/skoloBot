@@ -17,5 +17,6 @@ export class SpeakWizard {
   async onMsg(@Ctx() ctx: WizardContext) {
     const msg = ctx.text;
     await this.bot.telegram.sendMessage(process.env.CHAT_ID, msg);
+    await ctx.scene.leave();
   }
 }
