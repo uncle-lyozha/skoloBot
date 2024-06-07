@@ -31,7 +31,6 @@ export class AddFactWizard {
     } catch (err) {
       console.error(err);
     }
-
     await ctx.scene.leave();
   }
 }

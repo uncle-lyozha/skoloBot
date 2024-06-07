@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { UserSchemaClass } from './schemas/user.schema';
-import { UserType } from '../utils/types';
+import { TUser, UserSchemaClass } from './schemas/user.schema';
+import { IUser } from './user.interface';
 
 @Injectable()
-export class UserRepositoryClass {
+export class UserRepositoryClass implements IUser {
   constructor(
     @InjectModel('User') private readonly userModel: Model<UserSchemaClass>,
   ) {}
@@ -14,21 +14,18 @@ export class UserRepositoryClass {
     tgId: number,
     firstName: string,
     userName: string,
-  ): Promise<void> {
+  ): Promise<TUser> {
     const newUser = new this.userModel({
       tgId: tgId,
       first_name: firstName,
       username: userName,
     });
-    if (!newUser) {
-      console.error(`DB ERROR, failed to create user ${userName}.`);
-    }
-    const result = await newUser.save();
-    console.log(`New user created:\n ` + result);
+    const result: TUser = await newUser.save();
+    return result;
   }
 
-  async findUserByTgId(tgId: number): Promise<UserType> {
-    const user = await this.userModel.findOne({
+  async findUserByTgId(tgId: number): Promise<TUser> {
+    const user: TUser = await this.userModel.findOne({
       tgId: tgId,
     });
     return user;

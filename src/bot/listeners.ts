@@ -43,7 +43,7 @@ export class ListenerClass {
 
   @On('photo')
   async onPic(@Ctx() ctx: Context) {
-    if(Math.random() > 0.85) {
+    if(Math.random() > 0.95) {
       await ctx.react('💩');
     } else {
       return;

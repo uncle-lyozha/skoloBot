@@ -44,8 +44,11 @@ export class CommandsClass {
     @Sender('id') id: number,
     @Sender('username') userName: string,
   ) {
-    const msg = `Hi ${userName}, your ID: ${id}.`;
+    const msg = `Hi ${userName} `;
     await ctx.reply(msg);
+    await ctx.sendSticker(
+      'CAACAgIAAxkBAAIJlWZjLcEogQfuwNYM6z54RSFL8lBWAAIBAAP1orgb_3Txv0gPw3E1BA',
+    );
   }
 
   @Command('addfact')
@@ -61,15 +64,15 @@ export class CommandsClass {
   @Command('joke')
   async joke(@Ctx() ctx: SceneContext) {
     const joke = await this.bookRep.getRandomJoke();
-    const msg  = joke.text + `\nby ${joke.author}.`
-    await ctx.reply(msg)
+    const msg = joke.text + `\nby ${joke.author}.`;
+    await ctx.reply(msg);
   }
 
   @Command('fact')
   async fact(@Ctx() ctx: SceneContext) {
-    const fact = await this.bookRep.getRandomFact()
-    const msg = fact.text + `\nby ${fact.author}.`
-    await ctx.reply(msg)
+    const fact = await this.bookRep.getRandomFact();
+    const msg = fact.text + `\nby ${fact.author}.`;
+    await ctx.reply(msg);
   }
 
   // To be only used in the private chat with SkoloBot

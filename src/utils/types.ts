@@ -1,11 +1,3 @@
-import { SubjectEnum } from "./const";
-
-export type UserType = {
-  tgId: number;
-  first_name: string;
-  username: string;
-};
-
 export type ScriptType = {
   greetings: {
     hi: string;
@@ -26,10 +18,4 @@ export type ScriptType = {
     onEnter: string;
     onEnd: string;
   };
-};
-
-export type RecordType = {
-  author: string;
-  tgId: number;
-  text: string;
 };

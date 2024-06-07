@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument } from 'mongoose';
 
 @Schema()
 export class FactRecord {
@@ -12,4 +13,5 @@ export class FactRecord {
   text: string;
 }
 
+export type TFactRecord = HydratedDocument<FactRecord>;
 export const FactRecordSchema = SchemaFactory.createForClass(FactRecord);

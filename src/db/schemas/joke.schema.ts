@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument } from 'mongoose';
 
 @Schema()
 export class JokeRecord {
@@ -12,4 +13,5 @@ export class JokeRecord {
   text: string;
 }
 
+export type TJokeRecord = HydratedDocument<JokeRecord>;
 export const JokeRecordSchema = SchemaFactory.createForClass(JokeRecord);
