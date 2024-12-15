@@ -64,14 +64,14 @@ export class CommandsClass {
   @Command('joke')
   async joke(@Ctx() ctx: SceneContext) {
     const joke = await this.bookRep.getRandomJoke();
-    const msg = joke.text + `\nby ${joke.author}.`;
+    const msg = `Внимание, шутка:\n"${joke.text}"\nЮморит за стойкой ${joke.author}.`;
     await ctx.reply(msg);
   }
 
   @Command('fact')
   async fact(@Ctx() ctx: SceneContext) {
     const fact = await this.bookRep.getRandomFact();
-    const msg = fact.text + `\nby ${fact.author}.`;
+    const msg = `А вы знали, что\n"${fact.text}" \nБлещет эрудицией ${fact.author}.`;
     await ctx.reply(msg);
   }
 
