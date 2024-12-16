@@ -75,6 +75,11 @@ export class CommandsClass {
     await ctx.reply(msg);
   }
 
+  @Command('game')
+  async game(@Ctx() ctx: SceneContext) {
+    await ctx.scene.enter('game');
+  }
+  
   // To be only used in the private chat with SkoloBot
   @Command('speak')
   async speak(@Ctx() ctx: SceneContext) {

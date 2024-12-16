@@ -9,6 +9,7 @@ import { AddFactWizard } from 'src/scenes/addFact.wizard';
 import { BookRepositoryClass } from 'src/db/book.repository';
 import { AddJokeWizard } from 'src/scenes/addJoke.wizard';
 import { SpeakWizard } from 'src/scenes/speak.wizard';
+import { GameWizard } from 'src/scenes/game.wizard';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { SpeakWizard } from 'src/scenes/speak.wizard';
     BookRepositoryClass,
     AddFactWizard,
     AddJokeWizard,
+    GameWizard,
     SpeakWizard
   ],
 })

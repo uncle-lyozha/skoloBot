@@ -19,3 +19,17 @@ export type ScriptType = {
     onEnd: string;
   };
 };
+
+export type GameScriptType = {
+  [key: string]: {
+      replies: {
+          type: string,
+          message?: string,
+          src?: string
+      }[],
+      buttons: {
+          text: string,
+          nextStep: string
+      }[]
+  }
+}
