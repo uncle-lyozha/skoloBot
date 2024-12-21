@@ -6,51 +6,68 @@ import {
   Scene,
   SceneEnter,
   Sender,
+  Update,
 } from 'nestjs-telegraf';
 import { SceneContext } from 'telegraf/typings/scenes';
 import { Update as TypeGramUpdate } from 'telegraf/typings/core/types/typegram';
-import { Scenes, Telegraf } from 'telegraf';
+import { Markup, Scenes, Telegraf } from 'telegraf';
 import * as notValidatedJson from '../utils/gameScript.json';
 import { GameScriptType } from 'src/utils/types';
 
 @Injectable()
 @Scene('game')
-export class GameWizard {
+export class GameScene {
   private script: GameScriptType = notValidatedJson;
   private currentStep = 'start';
 
   constructor(@InjectBot() private bot: Telegraf<Scenes.SceneContext>) {}
 
   @SceneEnter()
-  async enter(@Ctx() context: SceneContext, @Sender('id') id: number) {
+  async enter(@Ctx() ctx: SceneContext) {
     const { buttons, replies } = this.script[this.currentStep];
     for (let reply of replies) {
       if (reply.type === 'text') {
-        const inlineKeyboard = buttons.map((button) => [
+        const buttonsArray = buttons.map((button) => [
           { text: button.text, callback_data: button.nextStep },
         ]);
-        await this.bot.telegram.sendMessage(id, reply.message, {
-          reply_markup: {
-            inline_keyboard: inlineKeyboard,
-          },
-        });
+
+        try {
+          await ctx.editMessageText(
+            reply.message,
+            Markup.inlineKeyboard(buttonsArray),
+          );
+        } catch (err) {
+          console.error(err);
+        }
       }
     }
+  }
+
+  @Action('dice')
+  async onDice(@Ctx() ctx: SceneContext) {
+    const diceMsg = await ctx.sendDice();
+    const messageId = diceMsg.message_id;
+    console.log(messageId)
+    setTimeout(() => {
+      ctx.deleteMessage(messageId);
+    }, 2000);
+    await ctx.scene.leave();
   }
 
   @Action(/.*/)
   async onAnswer(
     @Ctx()
-    context: SceneContext & { update: TypeGramUpdate.CallbackQueryUpdate },
+    ctx: SceneContext & { update: TypeGramUpdate.CallbackQueryUpdate },
   ) {
-    console.log(context);
-    const cbQuery = context.update.callback_query;
+    await ctx.answerCbQuery('Poop!');
+    const cbQuery = ctx.update.callback_query;
     const nextStep = 'data' in cbQuery ? cbQuery.data : null;
     if (nextStep === 'leave') {
-      await context.scene.leave();
+      await ctx.scene.leave();
+      await ctx.deleteMessage();
     } else {
       this.currentStep = nextStep;
-      await context.scene.reenter();
+      await ctx.scene.reenter();
     }
   }
 }

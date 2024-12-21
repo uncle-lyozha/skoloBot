@@ -27,6 +27,7 @@ export type GameScriptType = {
           message?: string,
           src?: string
       }[],
+      sense?: string,
       buttons: {
           text: string,
           nextStep: string

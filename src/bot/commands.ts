@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import {
+  Action,
   Command,
   Ctx,
   InjectBot,
@@ -7,7 +8,7 @@ import {
   Start,
   Update,
 } from 'nestjs-telegraf';
-import { Context, Telegraf } from 'telegraf';
+import { Context, Markup, Telegraf } from 'telegraf';
 import { SceneContext } from 'telegraf/typings/scenes';
 import * as notValidatedJson from '../utils/script.json';
 import { ScriptType } from 'src/utils/types';
@@ -77,12 +78,17 @@ export class CommandsClass {
 
   @Command('game')
   async game(@Ctx() ctx: SceneContext) {
-    await ctx.scene.enter('game');
+    await ctx.reply('Играть', Markup.inlineKeyboard([Markup.button.callback('Играть', 'game')]))
   }
-  
+
   // To be only used in the private chat with SkoloBot
   @Command('speak')
   async speak(@Ctx() ctx: SceneContext) {
     await ctx.scene.enter('speak');
+  }
+
+  @Action('game')
+  async onGame(@Ctx() ctx: SceneContext) {
+    await ctx.scene.enter('game')
   }
 }
