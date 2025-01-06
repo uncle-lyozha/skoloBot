@@ -13,6 +13,9 @@ import { SceneContext } from 'telegraf/typings/scenes';
 import * as notValidatedJson from '../utils/script.json';
 import { ScriptType } from 'src/utils/types';
 import { BookRepositoryClass } from 'src/db/book.repository';
+import { GamerRepositoryClass } from 'src/db/gamer.repository';
+import { TGamer } from 'src/db/schemas/gamer.schema';
+import { GameEnum, SceneTypeEnum } from 'src/utils/const';
 
 @Injectable()
 @Update()
@@ -20,6 +23,7 @@ export class CommandsClass {
   constructor(
     @InjectBot() private readonly bot: Telegraf<Context>,
     private readonly bookRep: BookRepositoryClass,
+    private readonly gamerRep: GamerRepositoryClass,
   ) {
     this.initializeBotCommands();
   }
@@ -41,15 +45,15 @@ export class CommandsClass {
 
   @Start()
   async start(
-    @Ctx() ctx: Context,
+    @Ctx() ctx: SceneContext,
     @Sender('id') id: number,
     @Sender('username') userName: string,
   ) {
-    const msg = `Hi ${userName} `;
-    await ctx.reply(msg);
+    const msg = `Hi ${userName}. Отправь команду /game, чтобы начать игру.`;
     await ctx.sendSticker(
       'CAACAgIAAxkBAAIJlWZjLcEogQfuwNYM6z54RSFL8lBWAAIBAAP1orgb_3Txv0gPw3E1BA',
     );
+    await ctx.reply(msg);
   }
 
   @Command('addfact')
@@ -77,8 +81,29 @@ export class CommandsClass {
   }
 
   @Command('game')
-  async game(@Ctx() ctx: SceneContext) {
-    await ctx.reply('Играть', Markup.inlineKeyboard([Markup.button.callback('Играть', 'game')]))
+  async game(
+    @Ctx() ctx: SceneContext,
+    @Sender('id') id: number,
+    @Sender('username') userName: string,
+  ) {
+    const gameName: GameEnum = GameEnum.odisseus;
+    const firstStep = SceneTypeEnum.story + ':start';
+    let gamer: TGamer = await this.gamerRep.findGamerByTgId(id);
+    if (!gamer) {
+      gamer = await this.gamerRep.createGamer(
+        id,
+        userName,
+        gameName,
+        firstStep,
+      );
+    }
+    if (!gamer.games.get(gameName)) {
+      await this.gamerRep.addGame(id, gameName, firstStep);
+    }
+    await ctx.reply(
+      'Играть',
+      Markup.inlineKeyboard([Markup.button.callback('Играть', 'game')]),
+    );
   }
 
   // To be only used in the private chat with SkoloBot
@@ -89,6 +114,6 @@ export class CommandsClass {
 
   @Action('game')
   async onGame(@Ctx() ctx: SceneContext) {
-    await ctx.scene.enter('game')
+    await ctx.scene.enter('game');
   }
 }

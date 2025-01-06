@@ -1,7 +1,7 @@
 {
-    "story:start": {
+    "battle:first": {
         "replies": [
-            { "type": "text", "message": "Hi, how are you?" },
+            { "type": "text", "message": "Брось кубик" },
             {
                 "type": "image",
                 "src": "https://lh3.googleusercontent.com/pw/AP1GczN6OG-7MP_drsLjDbA_Mvy8YGEawfmQF6PFxEZOCse8O9ZbeYnIqZJNLcbVrnG31Ka2mr7iS8aGF0hCRW0l4kOFJCrSoG6hCnpkP9fQOLPOAS0fhYMGNpXtTRPG3pH2Mk2q9ZTT9x-nCtf9od1kPp4MyA=w202-h300-s-no-gm?authuser=0"
@@ -9,21 +9,19 @@
         ],
         "sense": "sense test",
         "buttons": [
-            { "text": "I'm fine, thx.", "nextStep": "story:exit" },
-            { "text": "Luck check", "nextStep": "battle:first" }
+            { "text": "Бросить.", "nextStep": "dice" }
         ]
     },
-    "story:exit": {
+    "battle:second": {
         "replies": [
-            { "type": "text", "message": "Ok, see you." },
+            { "type": "text", "message": "В добрый путь." },
             {
                 "type": "image",
                 "src": "https://lh3.googleusercontent.com/pw/AP1GczN6OG-7MP_drsLjDbA_Mvy8YGEawfmQF6PFxEZOCse8O9ZbeYnIqZJNLcbVrnG31Ka2mr7iS8aGF0hCRW0l4kOFJCrSoG6hCnpkP9fQOLPOAS0fhYMGNpXtTRPG3pH2Mk2q9ZTT9x-nCtf9od1kPp4MyA=w202-h300-s-no-gm?authuser=0"
             }
         ],
         "buttons": [
-            { "text": "See you", "nextStep": "leave" },
-            { "text": "Bye", "nextStep": "leave" }
+            { "text": "Поехали дальше", "nextStep": "story:exit" }
         ]
     }
 }

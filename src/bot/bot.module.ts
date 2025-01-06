@@ -10,6 +10,8 @@ import { BookRepositoryClass } from 'src/db/book.repository';
 import { AddJokeWizard } from 'src/scenes/addJoke.wizard';
 import { SpeakWizard } from 'src/scenes/speak.wizard';
 import { GameScene } from 'src/scenes/game.scene';
+import { GamerRepositoryClass } from 'src/db/gamer.repository';
+import { BattleScene } from 'src/scenes/battle.scene';
 
 @Module({
   imports: [
@@ -25,10 +27,12 @@ import { GameScene } from 'src/scenes/game.scene';
     CommandsClass,
     ListenerClass,
     UserRepositoryClass,
+    GamerRepositoryClass,
     BookRepositoryClass,
     AddFactWizard,
     AddJokeWizard,
     GameScene,
+    BattleScene,
     SpeakWizard
   ],
 })

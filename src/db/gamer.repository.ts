@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { GamerSchemaClass, TGamer } from './schemas/gamer.schema';
 import { IGamer } from './gamer.interface';
+import { GameEnum } from 'src/utils/const';
 
 @Injectable()
 export class GamerRepositoryClass implements IGamer {
@@ -12,18 +13,15 @@ export class GamerRepositoryClass implements IGamer {
 
   async createGamer(
     tgId: number,
-    firstName: string,
-    userName: string,
+    gamerName: string,
     gameName: string,
-    currentScene: string,
+    scene: string,
   ): Promise<TGamer> {
     const newGamer = new this.gamerModel({
       tgId: tgId,
-      first_name: firstName,
-      username: userName,
-      game: {
-        name: gameName,
-        currentScene: currentScene,
+      gamerName: gamerName,
+      games: {
+        [gameName]: { scene },
       },
     });
     const result = await newGamer.save();
@@ -31,7 +29,76 @@ export class GamerRepositoryClass implements IGamer {
   }
 
   async findGamerByTgId(tgId: number): Promise<TGamer> {
-    const gamer = await this.gamerModel.findById(tgId);
+    const gamer: TGamer = await this.gamerModel.findOne({ tgId: tgId });
+    return gamer;
+  }
+
+  async addGame(
+    gamerId: number,
+    gameName: string,
+    scene: string,
+  ): Promise<TGamer> {
+    const gamer: TGamer = await this.gamerModel.findOneAndUpdate(
+      { tgId: gamerId },
+      {
+        $set: {
+          [`games.${gameName}`]: { scene },
+        },
+      },
+    );
+    return gamer;
+  }
+
+  async updateStep(gamerId: number, gameName: GameEnum, step: string) {
+    return await this.gamerModel
+      .findOneAndUpdate(
+        { tgId: gamerId, [`games.${gameName}`]: { $exists: true } },
+        {
+          $set: {
+            [`games.${gameName}.scene`]: step,
+          },
+        },
+        { new: true },
+      )
+      .exec();
+  }
+
+  async updatePoints(
+    gamerId: number,
+    gameName: GameEnum,
+    points: number,
+  ): Promise<TGamer> {
+    return await this.gamerModel
+      .findOneAndUpdate(
+        { tgId: gamerId, [`games.${gameName}`]: { $exists: true } },
+        {
+          $inc: {
+            [`games.${gameName}.points`]: points,
+          },
+        },
+        { new: true },
+      )
+      .exec();
+  }
+
+  async updateGamerParam(
+    gamerId: number,
+    gameName: GameEnum,
+    param: string,
+    val: number | string,
+  ) {
+    const gamer = await this.gamerModel
+      .findOneAndUpdate(
+        { tgId: gamerId, [`games.${gameName}`]: { $exists: true } },
+        {
+          $set: {
+            [`games.${gameName}.${param}`]: val,
+          },
+        },
+        { new: true },
+      )
+      .exec();
+    console.log(gamer);
     return gamer;
   }
 }
