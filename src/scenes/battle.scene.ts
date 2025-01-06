@@ -34,15 +34,15 @@ export class BattleScene {
   async enter(@Ctx() ctx: SceneContext, @Sender('id') gamerId: number) {
     const gamer: TGamer = await this.gamerRep.findGamerByTgId(gamerId);
     const currentStep = gamer.games.get(this.currentGame).scene;
-    this.sendInlineMsg(ctx, currentStep);
+    this.sendInlineMsg(gamerId, ctx, currentStep);
   }
 
   @Action('dice')
-  async onDice(@Ctx() ctx: SceneContext) {
+  async onDice(@Ctx() ctx: SceneContext, @Sender('id') gamerId: number) {
     const diceMsg = await ctx.sendDice();
     this.diceMsgId = diceMsg.message_id;
     const diceValue = diceMsg.dice.value;
-    this.sendInlineMsg(ctx, 'battle:second');
+    this.sendInlineMsg(gamerId, ctx, 'battle:second');
     console.log(diceValue);
   }
 
@@ -66,32 +66,50 @@ export class BattleScene {
       await ctx.scene.leave();
       await ctx.scene.enter('game');
     }
-    
+
     if (stepType === SceneTypeEnum.battle) {
       const step = SceneTypeEnum.battle + ':' + nextStep;
       await this.gamerRep.updateStep(userId, this.currentGame, step);
       await ctx.scene.reenter;
     }
   }
-  
-  private async sendInlineMsg(ctx, currentStep) {
+
+  private async sendInlineMsg(userId, ctx, currentStep) {
     const { buttons, replies } = this.script[currentStep];
     for (let reply of replies) {
       if (reply.type === 'text') {
         const buttonsArray = buttons.map((button) => [
           { text: button.text, callback_data: button.nextStep },
         ]);
-        
+
         try {
           await ctx.deleteMessage();
-          await ctx.editMessageText(
-            reply.message,
-            Markup.inlineKeyboard(buttonsArray),
-          );
+          await this.bot.telegram.sendMessage(userId, reply.message, {
+            reply_markup: {
+              inline_keyboard: buttonsArray,
+            },
+          });
         } catch (err) {
           console.error(err);
         }
       }
     }
+    // for (let reply of replies) {
+    //   if (reply.type === 'text') {
+    //     const buttonsArray = buttons.map((button) => [
+    //       { text: button.text, callback_data: button.nextStep },
+    //     ]);
+
+    //     try {
+    //       await ctx.deleteMessage();
+    //       await ctx.editMessageText(
+    //         reply.message,
+    //         Markup.inlineKeyboard(buttonsArray),
+    //       );
+    //     } catch (err) {
+    //       console.error(err);
+    //     }
+    //   }
+    // }
   }
 }
