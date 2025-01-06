@@ -10,8 +10,9 @@ import {
 } from 'nestjs-telegraf';
 import { Context, Markup, Telegraf } from 'telegraf';
 import { SceneContext } from 'telegraf/typings/scenes';
-import * as notValidatedJson from '../utils/script.json';
-import { ScriptType } from 'src/utils/types';
+import * as menuScript from '../utils/script.json';
+import * as gameScript from '../utils/gameScript.json';
+import { GameScriptType, ScriptType } from 'src/utils/types';
 import { BookRepositoryClass } from 'src/db/book.repository';
 import { GamerRepositoryClass } from 'src/db/gamer.repository';
 import { TGamer } from 'src/db/schemas/gamer.schema';
@@ -28,7 +29,9 @@ export class CommandsClass {
     this.initializeBotCommands();
   }
 
-  private script: ScriptType = notValidatedJson;
+  private script: ScriptType = menuScript;
+  private gameScript: GameScriptType = gameScript;
+  private currentGame: GameEnum = GameEnum.odisseus;
 
   async initializeBotCommands() {
     const commands = [
@@ -53,7 +56,14 @@ export class CommandsClass {
     await ctx.sendSticker(
       'CAACAgIAAxkBAAIJlWZjLcEogQfuwNYM6z54RSFL8lBWAAIBAAP1orgb_3Txv0gPw3E1BA',
     );
-    await ctx.reply(msg);
+    let gamer: TGamer = await this.gamerRep.findGamerByTgId(id);
+    const currentStep = gamer.games.get(this.currentGame).scene;
+    this.sendInlineMsg(id, ctx, 'start');
+
+    // await ctx.reply(
+    //   msg,
+    //   Markup.inlineKeyboard([Markup.button.callback('Играть', 'game')]),
+    // );
   }
 
   @Command('addfact')
@@ -86,8 +96,26 @@ export class CommandsClass {
     @Sender('id') id: number,
     @Sender('username') userName: string,
   ) {
+    // await ctx.reply(
+    //   'Играть',
+    //   Markup.inlineKeyboard([Markup.button.callback('Играть', 'game')]),
+    // );
+  }
+
+  // To be only used in the private chat with SkoloBot
+  @Command('speak')
+  async speak(@Ctx() ctx: SceneContext) {
+    await ctx.scene.enter('speak');
+  }
+
+  @Action('game')
+  async onGame(
+    @Ctx() ctx: SceneContext,
+    @Sender('id') id: number,
+    @Sender('username') userName: string,
+  ) {
     const gameName: GameEnum = GameEnum.odisseus;
-    const firstStep = SceneTypeEnum.story + ':start';
+    const firstStep = 'story:start';
     let gamer: TGamer = await this.gamerRep.findGamerByTgId(id);
     if (!gamer) {
       gamer = await this.gamerRep.createGamer(
@@ -100,20 +128,30 @@ export class CommandsClass {
     if (!gamer.games.get(gameName)) {
       await this.gamerRep.addGame(id, gameName, firstStep);
     }
-    await ctx.reply(
-      'Играть',
-      Markup.inlineKeyboard([Markup.button.callback('Играть', 'game')]),
-    );
-  }
-
-  // To be only used in the private chat with SkoloBot
-  @Command('speak')
-  async speak(@Ctx() ctx: SceneContext) {
-    await ctx.scene.enter('speak');
-  }
-
-  @Action('game')
-  async onGame(@Ctx() ctx: SceneContext) {
+    await this.gamerRep.updateStep(id, this.currentGame, firstStep)
     await ctx.scene.enter('game');
+  }
+
+  private async sendInlineMsg(userId, ctx, currentStep) {
+    // const { buttons, replies } = this.script[currentStep];
+    const { buttons, replies } = this.gameScript[currentStep];
+    for (let reply of replies) {
+      if (reply.type === 'text') {
+        const buttonsArray = buttons.map((button) => [
+          { text: button.text, callback_data: button.nextStep },
+        ]);
+
+        try {
+          await ctx.deleteMessage();
+          await this.bot.telegram.sendMessage(userId, reply.message, {
+            reply_markup: {
+              inline_keyboard: buttonsArray,
+            },
+          });
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    }
   }
 }

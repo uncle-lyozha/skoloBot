@@ -23,7 +23,6 @@ import { GameEnum, SceneTypeEnum } from 'src/utils/const';
 export class BattleScene {
   private script: GameScriptType = battleScript;
   private currentGame: GameEnum = GameEnum.odisseus;
-  private diceMsgId: number;
 
   constructor(
     @InjectBot() private bot: Telegraf<Scenes.SceneContext>,
@@ -37,15 +36,6 @@ export class BattleScene {
     this.sendInlineMsg(gamerId, ctx, currentStep);
   }
 
-  @Action('dice')
-  async onDice(@Ctx() ctx: SceneContext, @Sender('id') gamerId: number) {
-    const diceMsg = await ctx.sendDice();
-    this.diceMsgId = diceMsg.message_id;
-    const diceValue = diceMsg.dice.value;
-    this.sendInlineMsg(gamerId, ctx, 'battle:second');
-    console.log(diceValue);
-  }
-
   @On('callback_query')
   async onAnswer(
     @Ctx()
@@ -56,22 +46,29 @@ export class BattleScene {
     const cbQuery = ctx.update.callback_query;
     const cbData = 'data' in cbQuery ? cbQuery.data : null;
     const stepType = cbData.split(':')[0];
-    const nextStep = cbData.split(':')[1];
 
     if (stepType === SceneTypeEnum.story) {
-      const step = SceneTypeEnum.story + ':' + nextStep;
-      await this.gamerRep.updateStep(userId, this.currentGame, step);
-      // await ctx.deleteMessage();
-      // await ctx.deleteMessage(this.diceMsgId);
+      await this.gamerRep.updateStep(userId, this.currentGame, cbData);
       await ctx.scene.leave();
       await ctx.scene.enter('game');
     }
 
-    if (stepType === SceneTypeEnum.battle) {
-      const step = SceneTypeEnum.battle + ':' + nextStep;
-      await this.gamerRep.updateStep(userId, this.currentGame, step);
-      await ctx.scene.reenter;
+    if (stepType === 'dice') {
+      const option1 = cbData.split(':')[1];
+      const option2 = cbData.split(':')[2];
+      const diceMsg = await ctx.sendDice();
+      const diceValue = diceMsg.dice.value;
+      console.log(option1, option2, diceValue);
+      if (diceValue > 3) {
+        this.sendInlineMsg(userId, ctx, option2);
+      } else {
+        this.sendInlineMsg(userId, ctx, option1);
+      }
+      // this.gamerRep.updateGamerParam(userId, this.currentGame, 'weapons', 'knife')
     }
+
+    await this.gamerRep.updateStep(userId, this.currentGame, cbData);
+    ctx.scene.reenter;
   }
 
   private async sendInlineMsg(userId, ctx, currentStep) {
