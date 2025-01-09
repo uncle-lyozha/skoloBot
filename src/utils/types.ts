@@ -34,3 +34,18 @@ export type GameScriptType = {
       }[]
   }
 }
+
+export type GamesMenuJSONType = {
+  [key: string]: {
+      replies: {
+          type: string,
+          message?: string,
+          src?: string
+      }[],
+      sense?: string,
+      buttons: {
+          text: string,
+          game: string
+      }[]
+  }
+}

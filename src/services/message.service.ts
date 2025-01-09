@@ -10,11 +10,9 @@ export class MessageService {
 
   private gameScript: GameScriptType = gameScript;
 
-  async showMainMenu() {
-    
-  }
+  async showMainMenu() {}
 
-  async deleteAndSendMessage(userId, ctx, currentStep) {
+  async sendMessage(userId, ctx, currentStep) {
     // const { buttons, replies } = this.script[currentStep];
     const { buttons, replies } = this.gameScript[currentStep];
     for (let reply of replies) {

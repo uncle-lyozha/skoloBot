@@ -26,7 +26,7 @@ export class CommandsClass {
     @InjectBot() private readonly bot: Telegraf<Context>,
     private readonly bookRep: BookRepositoryClass,
     private readonly gamerRep: GamerRepositoryClass,
-    private readonly messageService: MessageService
+    private readonly messageService: MessageService,
   ) {
     this.initializeBotCommands();
   }
@@ -59,13 +59,7 @@ export class CommandsClass {
       'CAACAgIAAxkBAAIJlWZjLcEogQfuwNYM6z54RSFL8lBWAAIBAAP1orgb_3Txv0gPw3E1BA',
     );
     let gamer: TGamer = await this.gamerRep.findGamerByTgId(id);
-    const currentStep = gamer.games.get(this.currentGame).scene;
-    this.messageService.deleteAndSendMessage(id, ctx, 'start');
-
-    // await ctx.reply(
-    //   msg,
-    //   Markup.inlineKeyboard([Markup.button.callback('Играть', 'game')]),
-    // );
+    this.messageService.sendMessage(id, ctx, 'start');
   }
 
   @Command('addfact')
@@ -92,16 +86,10 @@ export class CommandsClass {
     await ctx.reply(msg);
   }
 
+  // for testing only
   @Command('game')
-  async game(
-    @Ctx() ctx: SceneContext,
-    @Sender('id') id: number,
-    @Sender('username') userName: string,
-  ) {
-    // await ctx.reply(
-    //   'Играть',
-    //   Markup.inlineKeyboard([Markup.button.callback('Играть', 'game')]),
-    // );
+  async game(@Ctx() ctx: SceneContext, @Sender('id') id: number) {
+    this.messageService.sendMessage(id, ctx, 'start');
   }
 
   // To be only used in the private chat with SkoloBot
@@ -133,28 +121,5 @@ export class CommandsClass {
     }
     await this.gamerRep.updateStep(id, this.currentGame, firstStep);
     await ctx.scene.enter('game');
-  }
-
-  private async sendInlineMsg(userId, ctx, currentStep) {
-    // const { buttons, replies } = this.script[currentStep];
-    const { buttons, replies } = this.gameScript[currentStep];
-    for (let reply of replies) {
-      if (reply.type === 'text') {
-        const buttonsArray = buttons.map((button) => [
-          { text: button.text, callback_data: button.nextStep },
-        ]);
-
-        try {
-          await ctx.deleteMessage();
-          await this.bot.telegram.sendMessage(userId, reply.message, {
-            reply_markup: {
-              inline_keyboard: buttonsArray,
-            },
-          });
-        } catch (err) {
-          console.error(err);
-        }
-      }
-    }
   }
 }

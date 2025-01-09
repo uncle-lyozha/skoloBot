@@ -17,6 +17,7 @@ import { GameScriptType } from 'src/utils/types';
 import { GamerRepositoryClass } from 'src/db/gamer.repository';
 import { TGamer } from 'src/db/schemas/gamer.schema';
 import { GameEnum, SceneTypeEnum } from 'src/utils/const';
+import { MessageService } from 'src/services/message.service';
 
 @Injectable()
 @Scene('battle')
@@ -27,13 +28,14 @@ export class BattleScene {
   constructor(
     @InjectBot() private bot: Telegraf<Scenes.SceneContext>,
     private readonly gamerRep: GamerRepositoryClass,
+    private readonly messageService: MessageService,
   ) {}
 
   @SceneEnter()
   async enter(@Ctx() ctx: SceneContext, @Sender('id') gamerId: number) {
     const gamer: TGamer = await this.gamerRep.findGamerByTgId(gamerId);
     const currentStep = gamer.games.get(this.currentGame).scene;
-    this.sendInlineMsg(gamerId, ctx, currentStep);
+    this.messageService.sendMessage(gamerId, ctx, currentStep);
   }
 
   @On('callback_query')
@@ -60,53 +62,14 @@ export class BattleScene {
       const diceValue = diceMsg.dice.value;
       console.log(option1, option2, diceValue);
       if (diceValue > 3) {
-        this.sendInlineMsg(userId, ctx, option2);
+        this.messageService.sendMessage(userId, ctx, option2);
       } else {
-        this.sendInlineMsg(userId, ctx, option1);
+        this.messageService.sendMessage(userId, ctx, option1);
       }
       // this.gamerRep.updateGamerParam(userId, this.currentGame, 'weapons', 'knife')
     }
 
     await this.gamerRep.updateStep(userId, this.currentGame, cbData);
     ctx.scene.reenter;
-  }
-
-  private async sendInlineMsg(userId, ctx, currentStep) {
-    const { buttons, replies } = this.script[currentStep];
-    for (let reply of replies) {
-      if (reply.type === 'text') {
-        const buttonsArray = buttons.map((button) => [
-          { text: button.text, callback_data: button.nextStep },
-        ]);
-
-        try {
-          await ctx.deleteMessage();
-          await this.bot.telegram.sendMessage(userId, reply.message, {
-            reply_markup: {
-              inline_keyboard: buttonsArray,
-            },
-          });
-        } catch (err) {
-          console.error(err);
-        }
-      }
-    }
-    // for (let reply of replies) {
-    //   if (reply.type === 'text') {
-    //     const buttonsArray = buttons.map((button) => [
-    //       { text: button.text, callback_data: button.nextStep },
-    //     ]);
-
-    //     try {
-    //       await ctx.deleteMessage();
-    //       await ctx.editMessageText(
-    //         reply.message,
-    //         Markup.inlineKeyboard(buttonsArray),
-    //       );
-    //     } catch (err) {
-    //       console.error(err);
-    //     }
-    //   }
-    // }
   }
 }

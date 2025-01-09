@@ -18,6 +18,7 @@ import { GameScriptType } from 'src/utils/types';
 import { GamerRepositoryClass } from 'src/db/gamer.repository';
 import { TGamer } from 'src/db/schemas/gamer.schema';
 import { GameEnum, SceneTypeEnum } from 'src/utils/const';
+import { MessageService } from 'src/services/message.service';
 
 @Injectable()
 @Scene('game')
@@ -29,29 +30,14 @@ export class GameScene {
   constructor(
     @InjectBot() private bot: Telegraf<Scenes.SceneContext>,
     private readonly gamerRep: GamerRepositoryClass,
+    private readonly messageService: MessageService,
   ) {}
 
   @SceneEnter()
   async enter(@Ctx() ctx: SceneContext, @Sender('id') userId: number) {
     const gamer: TGamer = await this.gamerRep.findGamerByTgId(userId);
     const currentStep = gamer.games.get(this.currentGame).scene;
-    const { buttons, replies } = this.script[currentStep];
-    for (let reply of replies) {
-      if (reply.type === 'text') {
-        const buttonsArray = buttons.map((button) => [
-          { text: button.text, callback_data: button.nextStep },
-        ]);
-
-        try {
-          await ctx.editMessageText(
-            reply.message,
-            Markup.inlineKeyboard(buttonsArray),
-          );
-        } catch (err) {
-          console.error(err);
-        }
-      }
-    }
+    await this.messageService.sendMessage(userId, ctx, currentStep);
   }
 
   // @Action(/.*/)
