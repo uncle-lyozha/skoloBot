@@ -17,6 +17,7 @@ import { BookRepositoryClass } from 'src/db/book.repository';
 import { GamerRepositoryClass } from 'src/db/gamer.repository';
 import { TGamer } from 'src/db/schemas/gamer.schema';
 import { GameEnum, SceneTypeEnum } from 'src/utils/const';
+import { MessageService } from 'src/services/message.service';
 
 @Injectable()
 @Update()
@@ -25,6 +26,7 @@ export class CommandsClass {
     @InjectBot() private readonly bot: Telegraf<Context>,
     private readonly bookRep: BookRepositoryClass,
     private readonly gamerRep: GamerRepositoryClass,
+    private readonly messageService: MessageService
   ) {
     this.initializeBotCommands();
   }
@@ -53,12 +55,12 @@ export class CommandsClass {
     @Sender('username') userName: string,
   ) {
     const msg = `Hi ${userName}. Отправь команду /game, чтобы начать игру.`;
-    await ctx.sendSticker(
+    const skolHeartSticker = await ctx.sendSticker(
       'CAACAgIAAxkBAAIJlWZjLcEogQfuwNYM6z54RSFL8lBWAAIBAAP1orgb_3Txv0gPw3E1BA',
     );
     let gamer: TGamer = await this.gamerRep.findGamerByTgId(id);
     const currentStep = gamer.games.get(this.currentGame).scene;
-    this.sendInlineMsg(id, ctx, 'start');
+    this.messageService.deleteAndSendMessage(id, ctx, 'start');
 
     // await ctx.reply(
     //   msg,
@@ -108,7 +110,8 @@ export class CommandsClass {
     await ctx.scene.enter('speak');
   }
 
-  @Action('game')
+  // @Action('game')
+  @Action(/^game/)
   async onGame(
     @Ctx() ctx: SceneContext,
     @Sender('id') id: number,
@@ -128,7 +131,7 @@ export class CommandsClass {
     if (!gamer.games.get(gameName)) {
       await this.gamerRep.addGame(id, gameName, firstStep);
     }
-    await this.gamerRep.updateStep(id, this.currentGame, firstStep)
+    await this.gamerRep.updateStep(id, this.currentGame, firstStep);
     await ctx.scene.enter('game');
   }
 

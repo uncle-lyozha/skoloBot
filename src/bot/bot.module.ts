@@ -12,6 +12,7 @@ import { SpeakWizard } from 'src/scenes/speak.wizard';
 import { GameScene } from 'src/scenes/game.scene';
 import { GamerRepositoryClass } from 'src/db/gamer.repository';
 import { BattleScene } from 'src/scenes/battle.scene';
+import { MessageService } from 'src/services/message.service';
 
 @Module({
   imports: [
@@ -33,7 +34,8 @@ import { BattleScene } from 'src/scenes/battle.scene';
     AddJokeWizard,
     GameScene,
     BattleScene,
-    SpeakWizard
+    SpeakWizard,
+    MessageService
   ],
 })
 export class BotModule {}
