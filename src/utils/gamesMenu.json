@@ -1,13 +1,6 @@
 {
   "menu": {
-    "replies": [
-      { "type": "text", "message": "Сыграем в игру?" },
-      {
-        "type": "image",
-        "src": "https://lh3.googleusercontent.com/pw/AP1GczN6OG-7MP_drsLjDbA_Mvy8YGEawfmQF6PFxEZOCse8O9ZbeYnIqZJNLcbVrnG31Ka2mr7iS8aGF0hCRW0l4kOFJCrSoG6hCnpkP9fQOLPOAS0fhYMGNpXtTRPG3pH2Mk2q9ZTT9x-nCtf9od1kPp4MyA=w202-h300-s-no-gm?authuser=0"
-      }
-    ],
-    "sense": "sense test",
-    "buttons": [{ "text": "Одиссей", "game": "odisseus" }]
+    "text": "Сыграем в игру?",
+    "buttons": [{ "text": "Одиссей", "game": "game:odisseus" }]
   }
 }

@@ -49,7 +49,7 @@ export class GamerRepositoryClass implements IGamer {
     return gamer;
   }
 
-  async updateStep(gamerId: number, gameName: GameEnum, step: string) {
+  async updateStep(gamerId: number, gameName: string, step: string) {
     return await this.gamerModel
       .findOneAndUpdate(
         { tgId: gamerId, [`games.${gameName}`]: { $exists: true } },
@@ -65,7 +65,7 @@ export class GamerRepositoryClass implements IGamer {
 
   async updatePoints(
     gamerId: number,
-    gameName: GameEnum,
+    gameName: string,
     points: number,
   ): Promise<TGamer> {
     return await this.gamerModel

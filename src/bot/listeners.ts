@@ -1,9 +1,22 @@
 import { Injectable } from '@nestjs/common';
-import { Ctx, Hears, InjectBot, On, Update } from 'nestjs-telegraf';
+import {
+  Action,
+  Ctx,
+  Hears,
+  InjectBot,
+  On,
+  Sender,
+  Update,
+} from 'nestjs-telegraf';
 import { UserRepositoryClass } from 'src/db/user.repository';
 import { Context, Telegraf } from 'telegraf';
+import { Update as TypeGramUpdate } from 'telegraf/typings/core/types/typegram';
 import * as notValidatedJson from '../utils/script.json';
 import { ScriptType } from 'src/utils/types';
+import { SceneContext } from 'telegraf/typings/scenes';
+import { GameEnum } from 'src/utils/const';
+import { TGamer } from 'src/db/schemas/gamer.schema';
+import { GamerRepositoryClass } from 'src/db/gamer.repository';
 
 @Injectable()
 @Update()
@@ -11,6 +24,7 @@ export class ListenerClass {
   constructor(
     @InjectBot() private readonly bot: Telegraf<Context>,
     private readonly userRep: UserRepositoryClass,
+    private readonly gamerRep: GamerRepositoryClass,
   ) {}
 
   private script: ScriptType = notValidatedJson;
@@ -48,5 +62,32 @@ export class ListenerClass {
     } else {
       return;
     }
+  }
+
+  @Action(/^game/)
+  async onGame(
+    @Ctx() ctx: SceneContext & { update: TypeGramUpdate.CallbackQueryUpdate },
+    @Sender('id') id: number,
+    @Sender('username') userName: string,
+  ) {
+    const cbQuery = ctx.update.callback_query;
+    const cbData = 'data' in cbQuery ? cbQuery.data : null;
+    // const stepType = cbData.split(':')[0];
+    let gameName = cbData.split(':')[1];
+    const firstStep = 'story:start';
+    let gamer: TGamer = await this.gamerRep.findGamerByTgId(id);
+    if (!gamer) {
+      gamer = await this.gamerRep.createGamer(
+        id,
+        userName,
+        gameName,
+        firstStep,
+      );
+    }
+    if (!gamer.games.get(gameName)) {
+      await this.gamerRep.addGame(id, gameName, firstStep);
+    }
+    await this.gamerRep.updateStep(id, gameName, firstStep);
+    await ctx.scene.enter('game');
   }
 }

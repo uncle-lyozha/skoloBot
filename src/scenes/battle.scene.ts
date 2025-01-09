@@ -35,7 +35,7 @@ export class BattleScene {
   async enter(@Ctx() ctx: SceneContext, @Sender('id') gamerId: number) {
     const gamer: TGamer = await this.gamerRep.findGamerByTgId(gamerId);
     const currentStep = gamer.games.get(this.currentGame).scene;
-    this.messageService.sendMessage(gamerId, ctx, currentStep);
+    this.messageService.sendStoryMessage(gamerId, ctx, currentStep);
   }
 
   @On('callback_query')
@@ -62,9 +62,9 @@ export class BattleScene {
       const diceValue = diceMsg.dice.value;
       console.log(option1, option2, diceValue);
       if (diceValue > 3) {
-        this.messageService.sendMessage(userId, ctx, option2);
+        this.messageService.sendStoryMessage(userId, ctx, option2);
       } else {
-        this.messageService.sendMessage(userId, ctx, option1);
+        this.messageService.sendStoryMessage(userId, ctx, option1);
       }
       // this.gamerRep.updateGamerParam(userId, this.currentGame, 'weapons', 'knife')
     }

@@ -32,8 +32,6 @@ export class CommandsClass {
   }
 
   private script: ScriptType = menuScript;
-  private gameScript: GameScriptType = gameScript;
-  private currentGame: GameEnum = GameEnum.odisseus;
 
   async initializeBotCommands() {
     const commands = [
@@ -58,8 +56,8 @@ export class CommandsClass {
     const skolHeartSticker = await ctx.sendSticker(
       'CAACAgIAAxkBAAIJlWZjLcEogQfuwNYM6z54RSFL8lBWAAIBAAP1orgb_3Txv0gPw3E1BA',
     );
-    let gamer: TGamer = await this.gamerRep.findGamerByTgId(id);
-    this.messageService.sendMessage(id, ctx, 'start');
+    await ctx.reply(msg);
+    // this.messageService.sendStoryMessage(id, ctx, 'start');
   }
 
   @Command('addfact')
@@ -89,37 +87,12 @@ export class CommandsClass {
   // for testing only
   @Command('game')
   async game(@Ctx() ctx: SceneContext, @Sender('id') id: number) {
-    this.messageService.sendMessage(id, ctx, 'start');
+    this.messageService.showMainMenu(id, ctx);
   }
 
   // To be only used in the private chat with SkoloBot
   @Command('speak')
   async speak(@Ctx() ctx: SceneContext) {
     await ctx.scene.enter('speak');
-  }
-
-  // @Action('game')
-  @Action(/^game/)
-  async onGame(
-    @Ctx() ctx: SceneContext,
-    @Sender('id') id: number,
-    @Sender('username') userName: string,
-  ) {
-    const gameName: GameEnum = GameEnum.odisseus;
-    const firstStep = 'story:start';
-    let gamer: TGamer = await this.gamerRep.findGamerByTgId(id);
-    if (!gamer) {
-      gamer = await this.gamerRep.createGamer(
-        id,
-        userName,
-        gameName,
-        firstStep,
-      );
-    }
-    if (!gamer.games.get(gameName)) {
-      await this.gamerRep.addGame(id, gameName, firstStep);
-    }
-    await this.gamerRep.updateStep(id, this.currentGame, firstStep);
-    await ctx.scene.enter('game');
   }
 }

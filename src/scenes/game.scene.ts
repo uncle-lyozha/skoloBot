@@ -37,7 +37,7 @@ export class GameScene {
   async enter(@Ctx() ctx: SceneContext, @Sender('id') userId: number) {
     const gamer: TGamer = await this.gamerRep.findGamerByTgId(userId);
     const currentStep = gamer.games.get(this.currentGame).scene;
-    await this.messageService.sendMessage(userId, ctx, currentStep);
+    await this.messageService.sendStoryMessage(userId, ctx, currentStep);
   }
 
   // @Action(/.*/)
