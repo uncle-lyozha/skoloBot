@@ -52,12 +52,14 @@ export class CommandsClass {
     @Sender('id') id: number,
     @Sender('username') userName: string,
   ) {
-    const msg = `Hi ${userName}. Отправь команду /game, чтобы начать игру.`;
-    const skolHeartSticker = await ctx.sendSticker(
-      'CAACAgIAAxkBAAIJlWZjLcEogQfuwNYM6z54RSFL8lBWAAIBAAP1orgb_3Txv0gPw3E1BA',
-    );
-    await ctx.reply(msg);
-    // this.messageService.sendStoryMessage(id, ctx, 'start');
+    this.messageService.showMainMenu(id, ctx);
+  }
+
+  // for testing only
+  @Command('game')
+  async game(@Ctx() ctx: SceneContext, @Sender('id') id: number) {
+    await this.gamerRep.setCurrentGame(id, 'odisseus');
+    this.messageService.showMainMenu(id, ctx);
   }
 
   @Command('addfact')
@@ -82,12 +84,6 @@ export class CommandsClass {
     const fact = await this.bookRep.getRandomFact();
     const msg = `А вы знали, что\n"${fact.text}" \nБлещет эрудицией ${fact.author}.`;
     await ctx.reply(msg);
-  }
-
-  // for testing only
-  @Command('game')
-  async game(@Ctx() ctx: SceneContext, @Sender('id') id: number) {
-    this.messageService.showMainMenu(id, ctx);
   }
 
   // To be only used in the private chat with SkoloBot

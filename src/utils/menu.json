@@ -1,5 +1,5 @@
 {
-  "menu": {
+  "gamesMenu": {
     "text": "Сыграем в игру?",
     "buttons": [{ "text": "Одиссей", "game": "game:odisseus" }]
   }

@@ -34,6 +34,9 @@ export class ListenerClass {
     const update = ctx.message;
     const newMembers =
       'new_chat_members' in update ? update.new_chat_members : null;
+    const skolHeartSticker = await ctx.sendSticker(
+      'CAACAgIAAxkBAAIJlWZjLcEogQfuwNYM6z54RSFL8lBWAAIBAAP1orgb_3Txv0gPw3E1BA',
+    );
     for (const user of newMembers) {
       const tgUsername = '@' + user.username;
       const userTgId = user.id;
@@ -73,7 +76,7 @@ export class ListenerClass {
     const cbQuery = ctx.update.callback_query;
     const cbData = 'data' in cbQuery ? cbQuery.data : null;
     // const stepType = cbData.split(':')[0];
-    let gameName = cbData.split(':')[1];
+    const gameName: string = cbData.split(':')[1];
     const firstStep = 'story:start';
     let gamer: TGamer = await this.gamerRep.findGamerByTgId(id);
     if (!gamer) {
@@ -86,8 +89,10 @@ export class ListenerClass {
     }
     if (!gamer.games.get(gameName)) {
       await this.gamerRep.addGame(id, gameName, firstStep);
+    } 
+    if (gamer.currentGame === '') {
+      await this.gamerRep.setCurrentGame(id, gameName);
     }
-    await this.gamerRep.updateStep(id, gameName, firstStep);
     await ctx.scene.enter('game');
   }
 }

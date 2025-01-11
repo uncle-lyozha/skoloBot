@@ -20,6 +20,7 @@ export class GamerRepositoryClass implements IGamer {
     const newGamer = new this.gamerModel({
       tgId: tgId,
       gamerName: gamerName,
+      currentGame: gameName,
       games: {
         [gameName]: { scene },
       },
@@ -47,6 +48,28 @@ export class GamerRepositoryClass implements IGamer {
       },
     );
     return gamer;
+  }
+
+  async setCurrentGame(gamerId: number, gameName: string) {
+    const gamer: TGamer = await this.gamerModel.findOneAndUpdate(
+      { tgId: gamerId },
+      {
+        $set: {
+          ['currentGame']: gameName,
+        },
+      },
+    );
+  }
+
+  async clearCurrentGame(gamerId: number) {
+    await this.gamerModel.findOneAndUpdate(
+      { tgId: gamerId },
+      {
+        $set: {
+          ['currentGame']: '',
+        },
+      },
+    );
   }
 
   async updateStep(gamerId: number, gameName: string, step: string) {

@@ -15,7 +15,7 @@ class Game {
   @Prop({ type: Map, default: {} })
   armor: Map<string, number>;
 
-  @Prop({required: true, default: 0})
+  @Prop({ required: true, default: 0 })
   points: number;
 }
 
@@ -30,6 +30,9 @@ export class GamerSchemaClass {
 
   @Prop({ required: true })
   gamerName: string;
+
+  @Prop({ required: true, default: '' })
+  currentGame: string;
 
   @Prop({ type: Map, of: GameSchema, default: {} })
   games: Map<string, Game>;

@@ -12,9 +12,13 @@ export interface IGamer {
 
   findGamerByTgId(tgId: number): Promise<TGamer>;
 
-  addGame(gamerId: number, gameName: GameEnum, scene: string): Promise<TGamer>;
+  addGame(gamerId: number, gameName: string, scene: string): Promise<TGamer>;
 
-  updateStep(gamerId: number, gameName: GameEnum, step: string): Promise<TGamer>;
+  setCurrentGame(gamerId: number, gameName: string): Promise<void>;
 
-  updatePoints(gamerId: number, gameName: GameEnum, points: number): Promise<TGamer>
+  clearCurrentGame(gamerId: number): Promise<void>;
+
+  updateStep(gamerId: number, gameName: string, step: string): Promise<TGamer>;
+
+  updatePoints(gamerId: number, gameName: string, points: number): Promise<TGamer>
 }

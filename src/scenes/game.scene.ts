@@ -65,7 +65,6 @@ export class GameScene {
     }
 
     if (stepType === SceneTypeEnum.end) {
-      await ctx.deleteMessage();
       // !!! hardcode, avoid
       await this.gamerRep.updateStep(
         userId,
@@ -75,6 +74,8 @@ export class GameScene {
       await this.gamerRep.updatePoints(userId, this.currentGame, 1);
       // await this.gamerRep.updateGamerParam(userId, this.currentGame, 'points', 1)
       await ctx.scene.leave();
+      await this.gamerRep.clearCurrentGame(userId)
+      await this.messageService.showMainMenu(userId, ctx)
     }
   }
 }
