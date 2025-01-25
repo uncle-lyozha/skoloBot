@@ -11,10 +11,7 @@ import {
 } from 'nestjs-telegraf';
 import { SceneContext } from 'telegraf/typings/scenes';
 import { Update as TypeGramUpdate } from 'telegraf/typings/core/types/typegram';
-import { Markup, Scenes, Telegraf } from 'telegraf';
-// import * as gameScriptJson from '../utils/odisseus.json';
-import * as gameScriptJson from '../utils/gameScript.json';
-import { GameScriptType } from 'src/utils/types';
+import { Scenes, Telegraf } from 'telegraf';
 import { GamerRepositoryClass } from 'src/db/gamer.repository';
 import { TGamer } from 'src/db/schemas/gamer.schema';
 import { GameEnum, SceneTypeEnum } from 'src/utils/const';
@@ -22,9 +19,7 @@ import { MessageService } from 'src/services/message.service';
 
 @Injectable()
 @Scene('game')
-// @Update()
 export class GameScene {
-  private script: GameScriptType = gameScriptJson;
   private currentGame: GameEnum = GameEnum.odisseus;
 
   constructor(
@@ -36,7 +31,8 @@ export class GameScene {
   @SceneEnter()
   async enter(@Ctx() ctx: SceneContext, @Sender('id') userId: number) {
     const gamer: TGamer = await this.gamerRep.findGamerByTgId(userId);
-    const currentStep = gamer.games.get(this.currentGame).scene;
+    const currentStep = gamer.games.get(this.currentGame).step;
+    console.log(currentStep)
     await this.messageService.sendStoryMessage(userId, ctx, currentStep);
   }
 

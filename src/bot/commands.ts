@@ -8,15 +8,12 @@ import {
   Start,
   Update,
 } from 'nestjs-telegraf';
-import { Context, Markup, Telegraf } from 'telegraf';
+import { Context, Telegraf } from 'telegraf';
 import { SceneContext } from 'telegraf/typings/scenes';
 import * as menuScript from '../utils/script.json';
-import * as gameScript from '../utils/gameScript.json';
-import { GameScriptType, ScriptType } from 'src/utils/types';
+import { ScriptType } from 'src/utils/types';
 import { BookRepositoryClass } from 'src/db/book.repository';
 import { GamerRepositoryClass } from 'src/db/gamer.repository';
-import { TGamer } from 'src/db/schemas/gamer.schema';
-import { GameEnum, SceneTypeEnum } from 'src/utils/const';
 import { MessageService } from 'src/services/message.service';
 
 @Injectable()

@@ -15,14 +15,14 @@ export class GamerRepositoryClass implements IGamer {
     tgId: number,
     gamerName: string,
     gameName: string,
-    scene: string,
+    step: string,
   ): Promise<TGamer> {
     const newGamer = new this.gamerModel({
       tgId: tgId,
       gamerName: gamerName,
       currentGame: gameName,
       games: {
-        [gameName]: { scene },
+        [gameName]: { step },
       },
     });
     const result = await newGamer.save();

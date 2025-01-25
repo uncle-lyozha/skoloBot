@@ -1,39 +1,33 @@
 {
-    "battle:first": {
-        "replies": [
-            { "type": "text", "message": "Брось кубик" },
-            {
-                "type": "image",
-                "src": "https://lh3.googleusercontent.com/pw/AP1GczN6OG-7MP_drsLjDbA_Mvy8YGEawfmQF6PFxEZOCse8O9ZbeYnIqZJNLcbVrnG31Ka2mr7iS8aGF0hCRW0l4kOFJCrSoG6hCnpkP9fQOLPOAS0fhYMGNpXtTRPG3pH2Mk2q9ZTT9x-nCtf9od1kPp4MyA=w202-h300-s-no-gm?authuser=0"
-            }
-        ],
-        "sense": "sense test",
-        "buttons": [
-            { "text": "Бросить.", "nextStep": "dice:second:third" }
-        ]
-    },
-    "second": {
-        "replies": [
-            { "type": "text", "message": "В добрый путь." },
-            {
-                "type": "image",
-                "src": "https://lh3.googleusercontent.com/pw/AP1GczN6OG-7MP_drsLjDbA_Mvy8YGEawfmQF6PFxEZOCse8O9ZbeYnIqZJNLcbVrnG31Ka2mr7iS8aGF0hCRW0l4kOFJCrSoG6hCnpkP9fQOLPOAS0fhYMGNpXtTRPG3pH2Mk2q9ZTT9x-nCtf9od1kPp4MyA=w202-h300-s-no-gm?authuser=0"
-            }
-        ],
-        "buttons": [
-            { "text": "Поехали дальше 2", "nextStep": "story:exit" }
-        ]
-    },
-    "third": {
-        "replies": [
-            { "type": "text", "message": "В добрый путь." },
-            {
-                "type": "image",
-                "src": "https://lh3.googleusercontent.com/pw/AP1GczN6OG-7MP_drsLjDbA_Mvy8YGEawfmQF6PFxEZOCse8O9ZbeYnIqZJNLcbVrnG31Ka2mr7iS8aGF0hCRW0l4kOFJCrSoG6hCnpkP9fQOLPOAS0fhYMGNpXtTRPG3pH2Mk2q9ZTT9x-nCtf9od1kPp4MyA=w202-h300-s-no-gm?authuser=0"
-            }
-        ],
-        "buttons": [
-            { "text": "Поехали дальше 3", "nextStep": "story:exit" }
-        ]
-    }
+  "battle:first": {
+    "replies": [
+      { "type": "text", "message": "Брось кубик" },
+      {
+        "type": "image",
+        "src": "https://lh3.googleusercontent.com/pw/AP1GczN6OG-7MP_drsLjDbA_Mvy8YGEawfmQF6PFxEZOCse8O9ZbeYnIqZJNLcbVrnG31Ka2mr7iS8aGF0hCRW0l4kOFJCrSoG6hCnpkP9fQOLPOAS0fhYMGNpXtTRPG3pH2Mk2q9ZTT9x-nCtf9od1kPp4MyA=w202-h300-s-no-gm?authuser=0"
+      }
+    ],
+    "sense": "sense test",
+    "buttons": [{ "text": "Бросить.", "nextStep": "dice:second:third" }]
+  },
+  "battle:second": {
+    "replies": [
+      { "type": "text", "message": "В добрый путь." },
+      {
+        "type": "image",
+        "src": "https://lh3.googleusercontent.com/pw/AP1GczN6OG-7MP_drsLjDbA_Mvy8YGEawfmQF6PFxEZOCse8O9ZbeYnIqZJNLcbVrnG31Ka2mr7iS8aGF0hCRW0l4kOFJCrSoG6hCnpkP9fQOLPOAS0fhYMGNpXtTRPG3pH2Mk2q9ZTT9x-nCtf9od1kPp4MyA=w202-h300-s-no-gm?authuser=0"
+      }
+    ],
+    "buttons": [{ "text": "Поехали дальше 2", "nextStep": "story:exit" }]
+  },
+  "battle:third": {
+    "replies": [
+      { "type": "text", "message": "В добрый путь." },
+      {
+        "type": "image",
+        "src": "https://lh3.googleusercontent.com/pw/AP1GczN6OG-7MP_drsLjDbA_Mvy8YGEawfmQF6PFxEZOCse8O9ZbeYnIqZJNLcbVrnG31Ka2mr7iS8aGF0hCRW0l4kOFJCrSoG6hCnpkP9fQOLPOAS0fhYMGNpXtTRPG3pH2Mk2q9ZTT9x-nCtf9od1kPp4MyA=w202-h300-s-no-gm?authuser=0"
+      }
+    ],
+    "buttons": [{ "text": "Поехали дальше 3", "nextStep": "story:exit" }]
+  }
 }

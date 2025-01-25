@@ -13,7 +13,7 @@ import { SceneContext } from 'telegraf/typings/scenes';
 import { Update as TypeGramUpdate } from 'telegraf/typings/core/types/typegram';
 import { Markup, Scenes, Telegraf } from 'telegraf';
 import * as battleScript from '../utils/battleScript.json';
-import { GameScriptType } from 'src/utils/types';
+import { GameScriptJSONType } from 'src/utils/types';
 import { GamerRepositoryClass } from 'src/db/gamer.repository';
 import { TGamer } from 'src/db/schemas/gamer.schema';
 import { GameEnum, SceneTypeEnum } from 'src/utils/const';
@@ -22,7 +22,6 @@ import { MessageService } from 'src/services/message.service';
 @Injectable()
 @Scene('battle')
 export class BattleScene {
-  private script: GameScriptType = battleScript;
   private currentGame: GameEnum = GameEnum.odisseus;
 
   constructor(
@@ -35,6 +34,7 @@ export class BattleScene {
   async enter(@Ctx() ctx: SceneContext, @Sender('id') gamerId: number) {
     const gamer: TGamer = await this.gamerRep.findGamerByTgId(gamerId);
     const currentStep = gamer.games.get(this.currentGame).scene;
+    console.log(currentStep)
     this.messageService.sendStoryMessage(gamerId, ctx, currentStep);
   }
 
@@ -61,10 +61,12 @@ export class BattleScene {
       const diceMsg = await ctx.sendDice();
       const diceValue = diceMsg.dice.value;
       console.log(option1, option2, diceValue);
+
+      // HARDCODE test only
       if (diceValue > 3) {
-        this.messageService.sendStoryMessage(userId, ctx, option2);
+        this.messageService.sendStoryMessage(userId, ctx, 'battle:' + option2);
       } else {
-        this.messageService.sendStoryMessage(userId, ctx, option1);
+        this.messageService.sendStoryMessage(userId, ctx, 'battle:' + option1);
       }
       // this.gamerRep.updateGamerParam(userId, this.currentGame, 'weapons', 'knife')
     }

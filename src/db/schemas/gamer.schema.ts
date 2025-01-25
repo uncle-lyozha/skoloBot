@@ -4,7 +4,7 @@ import { HydratedDocument } from 'mongoose';
 @Schema()
 class Game {
   @Prop({ required: true })
-  scene: string;
+  step: string;
 
   @Prop({ type: Map, default: {} })
   features: Map<string, number>;

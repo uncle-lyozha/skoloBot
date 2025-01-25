@@ -1,0 +1,34 @@
+{
+  "story": {
+    "start": {
+      "replies": [{ "type": "text", "message": "Wanna play a game?" }],
+      "sense": "poop",
+      "buttons": [
+        { "text": "Yes.", "nextStep": "battle:first" },
+        { "text": "No.", "nextStep": "story:exit" }
+      ]
+    },
+    "exit": {
+      "replies": [{ "type": "text", "message": "Bye." }],
+      "buttons": [
+        { "text": "See you", "nextStep": "leave" },
+        { "text": "Bye", "nextStep": "leave" }
+      ]
+    }
+  },
+  "battle": {
+    "first": {
+      "replies": [{ "type": "text", "message": "Брось кубик" }],
+      "sense": "sense test",
+      "buttons": [{ "text": "Бросить.", "nextStep": "dice" }]
+    },
+    "second": {
+      "replies": [{ "type": "text", "message": "В добрый путь." }],
+      "buttons": [{ "text": "Поехали дальше 2", "nextStep": "story:exit" }]
+    },
+    "third": {
+      "replies": [{ "type": "text", "message": "В добрый путь." }],
+      "buttons": [{ "text": "Поехали дальше 3", "nextStep": "story:exit" }]
+    }
+  }
+}

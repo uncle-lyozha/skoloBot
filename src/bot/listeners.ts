@@ -60,7 +60,7 @@ export class ListenerClass {
 
   @On('photo')
   async onPic(@Ctx() ctx: Context) {
-    if (Math.random() > 0.98) {
+    if (Math.random() > 0.99) {
       await ctx.react('💩');
     } else {
       return;
@@ -68,6 +68,7 @@ export class ListenerClass {
   }
 
   @Action(/^game/)
+  // @Action(/^battle/)
   async onGame(
     @Ctx() ctx: SceneContext & { update: TypeGramUpdate.CallbackQueryUpdate },
     @Sender('id') id: number,
