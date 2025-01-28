@@ -68,7 +68,6 @@ export class ListenerClass {
   }
 
   @Action(/^game/)
-  // @Action(/^battle/)
   async onGame(
     @Ctx() ctx: SceneContext & { update: TypeGramUpdate.CallbackQueryUpdate },
     @Sender('id') id: number,

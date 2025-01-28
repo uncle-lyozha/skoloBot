@@ -12,66 +12,62 @@ import {
 import { SceneContext } from 'telegraf/typings/scenes';
 import { Update as TypeGramUpdate } from 'telegraf/typings/core/types/typegram';
 import { Markup, Scenes, Telegraf } from 'telegraf';
-import * as battleScript from '../utils/battleScript.json';
-import { GameScriptJSONType } from 'src/utils/types';
 import { GamerRepositoryClass } from 'src/db/gamer.repository';
 import { TGamer } from 'src/db/schemas/gamer.schema';
-import { GameEnum, SceneTypeEnum } from 'src/utils/const';
+import { GameEnum, StepTypeEnum } from 'src/utils/const';
 import { MessageService } from 'src/services/message.service';
+import * as testGameScript from '../utils/test.json';
+import { TStepOption } from 'src/utils/types';
 
 @Injectable()
 @Scene('battle')
 export class BattleScene {
-  private currentGame: GameEnum = GameEnum.odisseus;
-
   constructor(
     @InjectBot() private bot: Telegraf<Scenes.SceneContext>,
     private readonly gamerRep: GamerRepositoryClass,
     private readonly messageService: MessageService,
   ) {}
 
+  private script = testGameScript.battle;
+
   @SceneEnter()
   async enter(@Ctx() ctx: SceneContext, @Sender('id') gamerId: number) {
     const gamer: TGamer = await this.gamerRep.findGamerByTgId(gamerId);
-    const currentStep = gamer.games.get(this.currentGame).scene;
-    console.log(currentStep)
-    this.messageService.sendStoryMessage(gamerId, ctx, currentStep);
+    this.messageService.sendStoryMessage(gamer, ctx);
   }
 
   @On('callback_query')
   async onAnswer(
     @Ctx()
     ctx: SceneContext & { update: TypeGramUpdate.CallbackQueryUpdate },
-    @Sender('id') userId: number,
+    @Sender('id') gamerId: number,
   ) {
+    const gamer: TGamer = await this.gamerRep.findGamerByTgId(gamerId);
     await ctx.answerCbQuery('Poop!');
     const cbQuery = ctx.update.callback_query;
     const cbData = 'data' in cbQuery ? cbQuery.data : null;
     const stepType = cbData.split(':')[0];
 
-    if (stepType === SceneTypeEnum.story) {
-      await this.gamerRep.updateStep(userId, this.currentGame, cbData);
+    if (stepType === StepTypeEnum.dice) {
+      let nextStep: string;
+      const dice = await ctx.sendDice();
+      const diceValue = dice.dice.value;
+      const step = gamer.currentStep.split(':')[1];
+      const options: TStepOption = this.script[step].options;
+      for (const [option, values] of Object.entries(options)) {
+        if (values.includes(diceValue)) nextStep = option;
+      }
+      await this.gamerRep.updateStep(gamerId, nextStep);
+      await ctx.scene.reenter();
+    }
+
+    if (stepType === StepTypeEnum.story) {
+      await this.gamerRep.updateStep(gamerId, cbData);
       await ctx.scene.leave();
       await ctx.scene.enter('game');
     }
 
-    if (stepType === 'dice') {
-      const option1 = cbData.split(':')[1];
-      const option2 = cbData.split(':')[2];
-      const diceMsg = await ctx.sendDice();
-      const diceValue = diceMsg.dice.value;
-      console.log(option1, option2, diceValue);
-
-      // HARDCODE test only
-      if (diceValue > 3) {
-        this.messageService.sendStoryMessage(userId, ctx, 'battle:' + option2);
-      } else {
-        this.messageService.sendStoryMessage(userId, ctx, 'battle:' + option1);
-      }
-      // this.gamerRep.updateGamerParam(userId, this.currentGame, 'weapons', 'knife')
-    }
-
-    await this.gamerRep.updateStep(userId, this.currentGame, cbData);
+    await this.gamerRep.updateStep(gamerId, cbData);
     ctx.scene.reenter;
   }
 }

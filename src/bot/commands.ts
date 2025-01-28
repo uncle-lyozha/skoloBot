@@ -55,7 +55,7 @@ export class CommandsClass {
   // for testing only
   @Command('game')
   async game(@Ctx() ctx: SceneContext, @Sender('id') id: number) {
-    await this.gamerRep.setCurrentGame(id, 'odisseus');
+    // await this.gamerRep.setCurrentGame(id, 'odisseus');
     this.messageService.showMainMenu(id, ctx);
   }
 

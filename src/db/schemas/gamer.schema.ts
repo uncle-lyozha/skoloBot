@@ -3,8 +3,6 @@ import { HydratedDocument } from 'mongoose';
 
 @Schema()
 class Game {
-  @Prop({ required: true })
-  step: string;
 
   @Prop({ type: Map, default: {} })
   features: Map<string, number>;
@@ -33,6 +31,9 @@ export class GamerSchemaClass {
 
   @Prop({ required: true, default: '' })
   currentGame: string;
+
+  @Prop({ required: true })
+  currentStep: string;
 
   @Prop({ type: Map, of: GameSchema, default: {} })
   games: Map<string, Game>;

@@ -1,7 +1,7 @@
 {
   "story": {
     "start": {
-      "replies": [{ "type": "text", "message": "Wanna play a game?" }],
+      "reply": "Wanna play a game?",
       "sense": "poop",
       "buttons": [
         { "text": "Yes.", "nextStep": "battle:first" },
@@ -9,7 +9,7 @@
       ]
     },
     "exit": {
-      "replies": [{ "type": "text", "message": "Bye." }],
+      "reply": "Bye.",
       "buttons": [
         { "text": "See you", "nextStep": "leave" },
         { "text": "Bye", "nextStep": "leave" }
@@ -18,16 +18,21 @@
   },
   "battle": {
     "first": {
-      "replies": [{ "type": "text", "message": "Брось кубик" }],
+      "reply": "Брось кубик",
+      "options": {
+        "battle:second": [1,3,5],
+        "battle:third": [2,4,6]
+      },
       "sense": "sense test",
-      "buttons": [{ "text": "Бросить.", "nextStep": "dice" }]
+      "buttons": [{ "text": "Бросить.", "nextStep": "dice:" }]
     },
     "second": {
-      "replies": [{ "type": "text", "message": "В добрый путь." }],
+      "reply": "В добрый путь.",
+
       "buttons": [{ "text": "Поехали дальше 2", "nextStep": "story:exit" }]
     },
     "third": {
-      "replies": [{ "type": "text", "message": "В добрый путь." }],
+      "reply": "В добрый путь.",
       "buttons": [{ "text": "Поехали дальше 3", "nextStep": "story:exit" }]
     }
   }

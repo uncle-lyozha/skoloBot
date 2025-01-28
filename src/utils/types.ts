@@ -35,30 +35,37 @@ export type GameScriptJSONType = {
   };
 };
 
+// export type GameJSONType = StoryJSONType & BattleJSONType;
 export type GameJSONType = {
-  story: {
-    [key: string]: {
-      replies: {
-        type: string;
-        message?: string;
-        src?: string;
-      }[];
-      sense?: string;
-      buttons: {
-        text: string;
-        nextStep: string;
-      }[];
-    };
+  story: StoryJSONType;
+  battle: BattleJSONType;
+};
+
+export type StoryJSONType = {
+  [key: string]: {
+    reply: string;
+    sense?: string;
+    buttons: {
+      text: string;
+      nextStep: string;
+    }[];
   };
-  battle: {
-    [key: string]: {
-      options: {
-        [key: string]: number[];
-      };
-      feature: {
-        [key: string]: number;
-      };
+};
+
+export type BattleJSONType = {
+  [key: string]: {
+    reply: string;
+    options?: {
+      [key: string]: number[];
     };
+    sense?: string;
+    feature?: {
+      [key: string]: number;
+    };
+    buttons: {
+      text: string;
+      nextStep: string;
+    }[];
   };
 };
 
@@ -70,4 +77,8 @@ export type GamesMenuJSONType = {
       game: string;
     }[];
   };
+};
+
+export type TStepOption = {
+  [key: string]: number[];
 };

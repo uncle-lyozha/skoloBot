@@ -15,14 +15,15 @@ export class GamerRepositoryClass implements IGamer {
     tgId: number,
     gamerName: string,
     gameName: string,
-    step: string,
+    firstStep: string,
   ): Promise<TGamer> {
     const newGamer = new this.gamerModel({
       tgId: tgId,
       gamerName: gamerName,
       currentGame: gameName,
+      currentStep: firstStep,
       games: {
-        [gameName]: { step },
+        [gameName]: {},
       },
     });
     const result = await newGamer.save();
@@ -37,13 +38,15 @@ export class GamerRepositoryClass implements IGamer {
   async addGame(
     gamerId: number,
     gameName: string,
-    scene: string,
+    step: string,
   ): Promise<TGamer> {
     const gamer: TGamer = await this.gamerModel.findOneAndUpdate(
       { tgId: gamerId },
       {
         $set: {
-          [`games.${gameName}`]: { scene },
+          ['currentGame']: gameName,
+          ['currentStep']: step,
+          [`games.${gameName}`]: { },
         },
       },
     );
@@ -72,16 +75,15 @@ export class GamerRepositoryClass implements IGamer {
     );
   }
 
-  async updateStep(gamerId: number, gameName: string, step: string) {
+  async updateStep(gamerId: number, step: string) {
     return await this.gamerModel
       .findOneAndUpdate(
-        { tgId: gamerId, [`games.${gameName}`]: { $exists: true } },
+        { tgId: gamerId },
         {
           $set: {
-            [`games.${gameName}.scene`]: step,
+            [`currentStep`]: step,
           },
         },
-        { new: true },
       )
       .exec();
   }

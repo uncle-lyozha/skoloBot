@@ -18,7 +18,7 @@ export interface IGamer {
 
   clearCurrentGame(gamerId: number): Promise<void>;
 
-  updateStep(gamerId: number, gameName: string, step: string): Promise<TGamer>;
+  updateStep(gamerId: number, step: string): Promise<TGamer>;
 
   updatePoints(gamerId: number, gameName: string, points: number): Promise<TGamer>
 }

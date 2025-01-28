@@ -4,10 +4,12 @@ export enum SubjectEnum {
 
 export enum GameEnum {
   odisseus = 'odisseus',
+  test = 'test',
 }
 
-export enum SceneTypeEnum {
+export enum StepTypeEnum {
   story = 'story',
   battle = 'battle',
-  end = "leave"
+  dice = 'dice',
+  end = 'leave',
 }
