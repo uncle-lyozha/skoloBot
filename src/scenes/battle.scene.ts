@@ -43,10 +43,16 @@ export class BattleScene {
     @Sender('id') gamerId: number,
   ) {
     const gamer: TGamer = await this.gamerRep.findGamerByTgId(gamerId);
-    await ctx.answerCbQuery('Poop!');
     const cbQuery = ctx.update.callback_query;
     const cbData = 'data' in cbQuery ? cbQuery.data : null;
     const stepType = cbData.split(':')[0];
+    const step = gamer.currentStep.split(':')[1];
+    const sense = 'sense' in this.script[step] ? this.script[step].sense : null;
+    if (sense) {
+      await ctx.answerCbQuery(sense);
+    } else {
+      await ctx.answerCbQuery();
+    }
 
     if (stepType === StepTypeEnum.dice) {
       let nextStep: string;
@@ -67,7 +73,9 @@ export class BattleScene {
       await ctx.scene.enter('game');
     }
 
-    await this.gamerRep.updateStep(gamerId, cbData);
-    ctx.scene.reenter;
+    if (stepType === StepTypeEnum.battle) {
+      await this.gamerRep.updateStep(gamerId, cbData);
+      ctx.scene.reenter;
+    }
   }
 }

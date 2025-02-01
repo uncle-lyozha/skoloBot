@@ -93,6 +93,9 @@ export class ListenerClass {
     if (gamer.currentGame === '') {
       await this.gamerRep.setCurrentGame(id, gameName);
     }
+
+    // for testing
+    await this.gamerRep.updateStep(id, firstStep)
     await ctx.scene.enter('game');
   }
 }
