@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { InjectBot } from 'nestjs-telegraf';
+import { Ctx, InjectBot } from 'nestjs-telegraf';
 import { Context, Telegraf } from 'telegraf';
 import * as testScript from '../utils/test.json';
 import * as menuJson from '../utils/menu.json';
@@ -21,14 +21,14 @@ export class MessageService {
   private testGameScript: GameJSONType = testScript;
   private menuJson: GamesMenuJSONType = menuJson;
 
-  async showMainMenu(userId: number, ctx: SceneContext) {
+  async showGamesMenu(userId: number, ctx: SceneContext) {
     const { buttons, text } = this.menuJson['gamesMenu'];
     const buttonsArray = buttons.map((button) => [
       { text: button.text, callback_data: button.game },
     ]);
 
     try {
-      await ctx.deleteMessage();
+      // await ctx.deleteMessage();
       await this.bot.telegram.sendMessage(userId, text, {
         reply_markup: {
           inline_keyboard: buttonsArray,
@@ -60,7 +60,7 @@ export class MessageService {
     ]);
 
     try {
-      await ctx.deleteMessage();
+      // await ctx.deleteMessage();
       await this.bot.telegram.sendMessage(gamer.tgId, reply, {
         reply_markup: {
           inline_keyboard: buttonsArray,
@@ -69,5 +69,11 @@ export class MessageService {
     } catch (err) {
       console.error(err);
     }
+  }
+
+  async hideKeyboard(@Ctx() ctx: Context) {
+    await ctx.editMessageReplyMarkup({
+      reply_markup: { remove_keyboard: true },
+    } as any);
   }
 }

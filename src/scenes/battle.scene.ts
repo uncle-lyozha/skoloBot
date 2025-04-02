@@ -33,7 +33,8 @@ export class BattleScene {
   @SceneEnter()
   async enter(@Ctx() ctx: SceneContext, @Sender('id') gamerId: number) {
     const gamer: TGamer = await this.gamerRep.findGamerByTgId(gamerId);
-    this.messageService.sendStoryMessage(gamer, ctx);
+    await this.messageService.hideKeyboard(ctx);
+    await this.messageService.sendStoryMessage(gamer, ctx);
   }
 
   @On('callback_query')
@@ -58,7 +59,6 @@ export class BattleScene {
       let nextStep: string;
       const dice = await ctx.sendDice();
       const diceValue = dice.dice.value;
-      const step = gamer.currentStep.split(':')[1];
       const options: TStepOption = this.script[step].options;
       for (const [option, values] of Object.entries(options)) {
         if (values.includes(diceValue)) nextStep = option;
@@ -75,7 +75,7 @@ export class BattleScene {
 
     if (stepType === StepTypeEnum.battle) {
       await this.gamerRep.updateStep(gamerId, cbData);
-      ctx.scene.reenter;
+      await ctx.scene.reenter;
     }
   }
 }

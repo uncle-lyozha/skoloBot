@@ -20,11 +20,11 @@
     "first": {
       "reply": "Брось кубик",
       "options": {
-        "battle:second": [1,3,5],
-        "battle:third": [2,4,6]
+        "battle:second": [1, 3, 5],
+        "battle:third": [2, 4, 6]
       },
       "sense": "sense test",
-      "buttons": [{ "text": "Бросить.", "nextStep": "dice:" }]
+      "buttons": [{ "text": "Бросить.", "nextStep": "dice:dice" }]
     },
     "second": {
       "reply": "В добрый путь.",

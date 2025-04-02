@@ -32,6 +32,7 @@ export class GameScene {
   @SceneEnter()
   async enter(@Ctx() ctx: SceneContext, @Sender('id') gamerId: number) {
     const gamer: TGamer = await this.gamerRep.findGamerByTgId(gamerId);
+    await this.messageService.hideKeyboard(ctx);
     await this.messageService.sendStoryMessage(gamer, ctx);
   }
 
@@ -48,7 +49,6 @@ export class GameScene {
     const step = gamer.currentStep.split(':')[1];
     const sense =
       'sense' in this.script.story[step] ? this.script.story[step].sense : null;
-
     if (sense) {
       await ctx.answerCbQuery(sense);
     } else {
@@ -73,7 +73,8 @@ export class GameScene {
       // await this.gamerRep.updateGamerParam(gamerId, this.currentGame, 'points', 1)
       await ctx.scene.leave();
       await this.gamerRep.clearCurrentGame(gamerId);
-      await this.messageService.showMainMenu(gamerId, ctx);
+      await this.messageService.hideKeyboard(ctx);
+      await this.messageService.showGamesMenu(gamerId, ctx);
     }
   }
 }

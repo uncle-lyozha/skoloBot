@@ -49,14 +49,14 @@ export class CommandsClass {
     @Sender('id') id: number,
     @Sender('username') userName: string,
   ) {
-    this.messageService.showMainMenu(id, ctx);
+    this.messageService.showGamesMenu(id, ctx);
   }
 
   // for testing only
   @Command('game')
   async game(@Ctx() ctx: SceneContext, @Sender('id') id: number) {
     // await this.gamerRep.setCurrentGame(id, 'odisseus');
-    this.messageService.showMainMenu(id, ctx);
+    this.messageService.showGamesMenu(id, ctx);
   }
 
   @Command('addfact')

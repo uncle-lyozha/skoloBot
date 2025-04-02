@@ -77,6 +77,7 @@ export class ListenerClass {
     const cbData = 'data' in cbQuery ? cbQuery.data : null;
     // const stepType = cbData.split(':')[0];
     const gameName: string = cbData.split(':')[1];
+    // TEST
     const firstStep = 'story:start';
     let gamer: TGamer = await this.gamerRep.findGamerByTgId(id);
     if (!gamer) {
@@ -89,13 +90,27 @@ export class ListenerClass {
     }
     if (!gamer.games.get(gameName)) {
       await this.gamerRep.addGame(id, gameName, firstStep);
-    } 
+    }
     if (gamer.currentGame === '') {
       await this.gamerRep.setCurrentGame(id, gameName);
     }
 
     // for testing
-    await this.gamerRep.updateStep(id, firstStep)
+    await this.gamerRep.updateStep(id, firstStep);
     await ctx.scene.enter('game');
+  }
+
+  @Action(/^story/)
+  async onStory(
+    @Ctx() ctx: SceneContext & { update: TypeGramUpdate.CallbackQueryUpdate },
+  ) {
+    await ctx.scene.enter('game');
+  }
+
+  @Action(/^battle/)
+  async onBattle(
+    @Ctx() ctx: SceneContext & { update: TypeGramUpdate.CallbackQueryUpdate },
+  ) {
+    await ctx.scene.enter('battle');
   }
 }
